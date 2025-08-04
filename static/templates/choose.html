@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Choose a Story</title>
+    {% load static %}
+    <style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        padding: 40px;
+        background: url("{% static 'image7.jpg' %}") no-repeat center center fixed;
+        background-size: cover;
+        margin: 0;
+        color: #333;
+    }
+
+    /* .h1{
+    background: rgba(255, 255, 255, 0.9); 
+    padding: 15px 30px;
+     border-radius: 15px; 
+     text-align: center; 
+     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+      max-width: 500px;
+     margin: 20px auto;
+    } */
+
+
+    .grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 30px;
+        margin-top: 30px;
+    }
+
+    .card {
+        background: rgba(255, 255, 255, 0.9);
+        border-radius: 15px;
+        padding: 20px;
+        width: 250px;
+        height: 130px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        text-align: center;
+        transition: transform 0.2s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .card:hover {
+        transform: scale(1.05);
+    }
+
+    a {
+        text-decoration: none;
+        color: #ff6f61;
+        font-weight: bold;
+        font-size: 18px;
+    }
+
+    .category {
+        font-size: 14px;
+        color: #666;
+        margin-top: 8px;
+    }
+
+    .top-right {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .back-btn {
+        background-color: #6c63ff;
+        padding: 10px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: bold;
+        text-decoration: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .back-btn:hover {
+        background-color: #574fe2;
+    }
+    </style>
+</head>
+<body>
+
+<!-- Back Button -->
+<div class="top-right">
+    <a href="{% url 'home' %}" class="back-btn">🏠 Back to Home</a>
+</div>
+
+<div style="background: rgba(255, 255, 255, 0.95); padding: 20px 40px; border-radius: 15px; max-width: 500px; margin: 20px auto; box-shadow: 0 8px 16px rgba(0,0,0,0.25); text-align: center;">
+        <h1 style="color: #ff6f61; font-size: 32px; margin: 0;">📚 Choose a Story</h1>
+    </div>
+
+<div class="grid">
+    {% for story in stories %}
+    <a href="{% url 'view_story' story.id %}" style="text-decoration: none; color: inherit;">
+        <div class="card">
+            <div style="color: #ff6f61; font-weight: bold; font-size: 18px;">{{ story.title }}</div>
+            <div class="category">Category: {{ story.category }}</div>
+        </div>
+    </a>
+    {% endfor %}
+</div>
+
+</body>
+</html>

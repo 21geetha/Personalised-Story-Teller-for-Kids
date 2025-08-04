@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login - Personalised Story Teller</title>
+   {% load static %}
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: url("{% static 'image.jpg' %}") no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "Welcome to Personalised Story Teller";
+      position: absolute;
+      top: 1%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 3.5rem;
+      font-weight: bold;
+      color: #ffffff;
+      z-index: 0;
+      text-shadow: 3px 3px 8px #ff1493;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .login-container {
+      background: rgba(255, 255, 255, 0.85);
+      padding: 40px 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+      z-index: 1;
+      position: relative;
+    }
+
+    .login-container h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #ff4081;
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+      color: #333;
+      text-align: left;
+    }
+
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #ffb6c1;
+      border-radius: 10px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+
+    button {
+      margin-top: 20px;
+      padding: 12px 30px;
+      font-size: 1rem;
+      background-color: #ff69b4;
+      color: white;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #ff1493;
+      transform: scale(1.05);
+    }
+
+    .register-link {
+      margin-top: 15px;
+      font-size: 0.95rem;
+    }
+
+    .register-link a {
+      color: #e91e63;
+      text-decoration: none;
+      font-weight: bold;
+    }
+
+    .register-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container">
+    <h1>Login Page</h1>
+       {% if messages %}
+  {% for message in messages %}
+    <p style="color: {% if 'success' in message.tags %}green{% else %}red{% endif %}; font-weight: bold;">
+      {{ message }}
+    </p>
+  {% endfor %}
+{% endif %}
+    <form method="post" action="{% url 'login' %}">
+      {% csrf_token %}
+      <label for="username">Enter Username:</label>
+      <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+      <label for="password">Enter Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+      <button type="submit">Login</button>
+    </form>
+
+    <div class="register-link">
+      Don’t have an account? <a href="{% url 'register' %}">Register here</a>
+    </div>
+  </div>
+</body>
+</html>

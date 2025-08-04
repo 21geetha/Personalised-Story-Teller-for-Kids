@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register-Page</title>
+  {% load static %}
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: url("{% static 'image3.png' %}") no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .register-container {
+      background: rgba(247, 236, 236, 0.897);
+      padding: 40px 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
+    }
+    .register-container h1 {
+      margin-bottom: 20px;
+      font-size: 2rem;
+      color: #ff1493;
+    }
+    label {
+      display: block;
+      margin: 15px 0 5px;
+      font-weight: bold;
+      color: #333;
+      text-align: left;
+    }
+    input[type="text"],
+    input[type="password"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ff1493;
+      border-radius: 8px;
+      font-size: 1rem;
+      box-sizing: border-box;
+    }
+    button {
+      margin-top: 25px;
+      padding: 12px 30px;
+      font-size: 1rem;
+      background-color: #ff1493;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+    button:hover {
+      background-color: #ff1493;
+      transform: scale(1.05);
+    }
+    .login-link {
+      margin-top: 20px;
+      display: block;
+      font-size: 0.95rem;
+    }
+    .login-link a {
+      color: #ff1493;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    .login-link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="register-container">
+    <h1>Registration Page</h1>
+         {% if messages %}
+    
+      {% for message in messages %}
+        <li style="color: black; font-weight: bold;">{{ message }}</li>
+      {% endfor %}
+    
+  {% endif %}
+    <form method="post" action="{% url 'register' %}">
+    {% csrf_token %}
+      <label for="username">Enter Username:</label>
+      <input type="text" id="username" name="username" placeholder="Enter username" required>
+
+      <label for="password">Enter Password:</label>
+      <input type="password" id="password" name="password" placeholder="Enter password" required>
+
+      <label for="confirm_password">Re-enter Password:</label>
+      <input type="password" id="confirm_password" name="confirm_password" placeholder="Re-enter password" required>
+
+      <button type="submit">Register</button>
+    </form>
+
+    <div class="login-link">
+      Already have an account? <a href="{% url 'login' %}">Login here</a>
+    </div>
+  </div>
+</body>
+</html>

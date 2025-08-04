@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{{ story.title }}</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            padding: 40px;
+            background: #fff8dc;
+            max-width: 800px;
+            margin: auto;
+            position: relative;
+        }
+        .title {
+            font-size: 28px;
+            font-weight: bold;
+            color: #ff6f61;
+        }
+        .category {
+            font-size: 16px;
+            color: #777;
+            margin-bottom: 20px;
+        }
+        .content {
+            font-size: 18px;
+            line-height: 1.6;
+        }
+        .moral {
+            margin-top: 30px;
+            font-weight: bold;
+            color: green;
+        }
+        .back-button {
+            margin-top: 20px;
+        }
+        .back-button a {
+            text-decoration: none;
+            background-color: #ff6f61;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            display: inline-block;
+        }
+        .back-button a:hover {
+            background-color: #ff3b2e;
+        }
+        .voice-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: #ff6f61;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .voice-button:hover {
+            background-color: #ff3b2e;
+        }
+    </style>
+</head>
+<body>
+    <button class="voice-button" onclick="speakStory()">🔊 Read Aloud</button>
+
+    <div class="title">{{ story.title }}</div>
+    <div class="category">Category: {{ story.category }}</div>
+    <div class="content" id="storyText">
+        {{ story.content|linebreaks }}
+    </div>
+    <div class="moral">⭐ Moral: {{ story.moral }}</div>
+
+    <div class="back-button">
+        <a href="{% url 'choose_story' %}">← Back to Choose Page</a>
+    </div>
+
+    <script>
+    let currentUtterance = null;
+
+    function speakStory() {
+        // Cancel any previous speech before starting new one
+        speechSynthesis.cancel();
+
+        const text = document.getElementById('storyText').innerText;
+        const moral = "Moral of the story: " + "{{ story.moral }}";
+
+        currentUtterance = new SpeechSynthesisUtterance(text + ". " + moral);
+        currentUtterance.lang = 'en-US';
+        speechSynthesis.speak(currentUtterance);
+    }
+
+    // Stop speech on double-click anywhere on the page
+    document.addEventListener('dblclick', function () {
+        if (speechSynthesis.speaking) {
+            speechSynthesis.cancel();
+        }
+    });
+</script>
+
+</body>
+</html>

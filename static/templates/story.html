@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Your Story</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url("{% static 'image5.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            padding: 40px;
+            margin: 0;
+            color: #333;
+            position: relative;
+        }
+
+        .top-buttons {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            z-index: 10;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #6c63ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: bold;
+            text-align: center;
+            transition: background-color 0.3s ease;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background-color: #574fe2;
+        }
+
+        .small-btn {
+            font-size: 14px;
+        }
+
+        .red-btn {
+            background-color: #f44336;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.88);
+            padding: 30px 40px;
+            border-radius: 20px;
+            max-width: 800px;
+            margin: 0 auto;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+        }
+
+        h1 {
+            color: #ff6f61;
+            text-align: center;
+            font-size: 32px;
+        }
+
+        h2 {
+            text-align: center;
+            color: #444;
+            margin-top: 10px;
+        }
+
+        .story-content {
+            margin-top: 30px;
+            font-size: 18px;
+            line-height: 1.6;
+        }
+
+        .story-image {
+            text-align: center;
+            margin-top: 25px;
+        }
+
+        .story-image img {
+            max-width: 100%;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .center-controls {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-top: 30px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .translate-form {
+            margin-top: 10px;
+            margin-left: 80px; /* Shift towards right as requested */
+            text-align: center;
+        }
+
+        .translate-controls {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+
+        select {
+            padding: 10px;
+            border-radius: 8px;
+            border: none;
+            font-weight: bold;
+            background-color: #6c63ff;
+            color: white;
+            cursor: pointer;
+        }
+
+        select:hover {
+            background-color: #574fe2;
+        }
+
+        .translate-btn {
+            background-color: #28a745;
+        }
+
+        .gray-btn {
+            background-color: #888888;
+        }
+
+        .generate-btn {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- 🟣 TOP RIGHT BUTTONS -->
+<div class="top-buttons">
+    <a href="{% url 'home' %}" class="btn small-btn">🏠 Home</a>
+    <a href="{% url 'story_form' %}" class="btn small-btn">✍️ Back to Form</a>
+    <a href="{% url 'logout' %}" class="btn small-btn red-btn">🚪 Logout</a>
+</div>
+
+<!-- 🌟 STORY CONTAINER -->
+<div class="container">
+    <h1>Welcome, {{ name }}! 🌟</h1>
+    <h2>Here is your magical story...</h2>
+
+    <div class="story-content">
+        {% autoescape off %}
+            {{ story|linebreaks }}
+        {% endautoescape %}
+    </div>
+
+    {% if image_path %}
+    <div class="story-image">
+        <img src="{% static image_path %}" alt="Generated Illustration" />
+    </div>
+    {% endif %}
+
+    <!--  Controls -->
+    <div class="center-controls">
+
+        <div style="text-align: center; margin-top: 30px;">
+
+    <!-- Translate Dropdown Form (Label + Select side-by-side) -->
+    <form method="POST" action="{% url 'view_translated_story' %}" style="display: inline-block;">
+        {% csrf_token %}
+        <input type="hidden" name="story" value="{{ story }}">
+        <div style="display: flex; justify-content: center; align-items: center; gap: 10px;">
+            <label for="language" style="margin: 0;">🌐 Translate story to:</label>
+            <select name="language" id="language">
+                <option value="hi">Hindi</option>
+                <option value="te">Telugu</option>
+            </select>
+        </div>
+        <button type="submit" class="btn" style="background-color: #28a745; margin-top: 10px;">🌍 Translate & Narrate</button>
+    </form>
+
+    <!-- 🔊 Play/Pause Buttons -->
+    <div class="btn-group" style="justify-content: center; margin-top: 20px;">
+        <button id="play-btn" class="btn" style="background-color: #6c63ff;">🔊 Play</button>
+        <button id="pause-btn" class="btn" style="background-color: #888888;">⏸ Pause</button>
+    </div>
+
+        <!-- Generate Another Story Button -->
+        <a href="{% url 'story_form' %}" class="btn generate-btn">✨ Generate Another Story</a>
+
+    </div>
+</div>
+
+<!-- Narration Script -->
+<script>
+    const playBtn = document.getElementById("play-btn");
+    const pauseBtn = document.getElementById("pause-btn");
+
+    const storyText = `{{ story|escapejs }}`;
+    const preferredLang = "{{ lang|default:'en-US' }}";
+    const preferredVoiceName = "{{ voice|default:'Google US English' }}";
+
+    let utterance;
+    let selectedVoice = null;
+    let voicesReady = false;
+
+    function loadVoices() {
+        const allVoices = window.speechSynthesis.getVoices();
+        selectedVoice = allVoices.find(v => v.name === preferredVoiceName && v.lang === preferredLang);
+
+        if (!selectedVoice) {
+            selectedVoice = allVoices.find(v =>
+                v.lang.startsWith(preferredLang) &&
+                (
+                    v.name.toLowerCase().includes("female") ||
+                    v.name.toLowerCase().includes("zira") ||
+                    v.name.toLowerCase().includes("google") ||
+                    v.name.toLowerCase().includes("neural") ||
+                    v.name.toLowerCase().includes("hindi") ||
+                    v.name.toLowerCase().includes("telugu")
+                )
+            );
+        }
+
+        if (!selectedVoice) {
+            selectedVoice = allVoices.find(v => v.lang.startsWith(preferredLang));
+        }
+
+        voicesReady = true;
+    }
+
+    function speakStory() {
+        if (!voicesReady) {
+            console.warn("Voices not loaded yet.");
+            return;
+        }
+
+        window.speechSynthesis.cancel();
+        utterance = new SpeechSynthesisUtterance(storyText);
+        utterance.voice = selectedVoice || null;
+        utterance.lang = preferredLang;
+        utterance.rate = 0.9;
+        utterance.pitch = 1.1;
+        window.speechSynthesis.speak(utterance);
+    }
+
+    if (speechSynthesis.onvoiceschanged !== undefined) {
+        speechSynthesis.onvoiceschanged = loadVoices;
+    } else {
+        loadVoices();
+    }
+
+    playBtn.addEventListener("click", () => {
+        if (window.speechSynthesis.speaking && window.speechSynthesis.paused) {
+            window.speechSynthesis.resume();
+        } else {
+            speakStory();
+        }
+    });
+
+    pauseBtn.addEventListener("click", () => {
+        if (window.speechSynthesis.speaking) {
+            window.speechSynthesis.pause();
+        }
+    });
+
+    window.addEventListener("beforeunload", () => {
+        window.speechSynthesis.cancel();
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Welcome | Story Generator</title>
+  {% load static %}
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Comic Sans MS', cursive, sans-serif;
+      background: url("{% static 'image6.jpg' %}") no-repeat center center fixed;
+      background-size: cover;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    body::before {
+      content: "Choose Your Magical Story Path";
+      position: absolute;
+      top: 5%;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 3rem;
+      font-weight: bold;
+      color: #ffffff;
+      z-index: 0;
+      text-shadow: 3px 3px 8px #ff1493;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 40px;
+      z-index: 1;
+    }
+
+    .home-btn {
+      background-color: #4FC3F7;
+      color: white;
+      padding: 20px 40px;
+      font-size: 20px;
+      font-weight: bold;
+      border: none;
+      border-radius: 14px;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+      transition: all 0.3s ease;
+    }
+
+    .home-btn:hover {
+      background-color: #0288D1;
+      transform: scale(1.08);
+    }
+
+    .top-right {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 2;
+    }
+
+    .logout-btn {
+      background-color: #ff4d4d;
+      padding: 10px 20px;
+      border-radius: 10px;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      transition: background 0.3s ease;
+    }
+
+    .logout-btn:hover {
+      background-color: #cc0000;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Logout Button -->
+  <div class="top-right">
+    <a href="{% url 'logout' %}" class="logout-btn">🚪 Logout</a>
+  </div>
+
+  <div class="button-container">
+    <a href="{% url 'story_form' %}" class="home-btn">📖 Tell Me a Story</a>
+    <a href="{% url 'choose_story' %}" class="home-btn">📚 Choose a Story</a>
+  </div>
+
+</body>
+</html>

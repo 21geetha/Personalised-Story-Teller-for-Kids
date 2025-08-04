@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personalized Story Generator</title>
+    {% load static %}
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: url("{% static 'image4.jpg' %}") no-repeat center center fixed;
+            background-size: cover;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 40px 20px;
+            min-height: 100vh;
+            margin: 0;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .top-right {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+
+        .top-right a {
+            text-decoration: none;
+            background-color: #6c63ff;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+
+        .top-right a:hover {
+            background-color: #574fe2;
+        }
+
+        .form-container {
+            background: rgba(247, 236, 236, 0.9);
+            padding: 30px 40px;
+            border-radius: 20px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 500px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #ff6f61;
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-weight: bold;
+            display: block;
+            margin-top: 15px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+        }
+
+        button {
+            background-color: #ff6f61;
+            color: white;
+            padding: 12px;
+            border: none;
+            width: 100%;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            margin-top: 25px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e65c50;
+        }
+
+        #moral-group, #interest-group, #emotion-group {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Back Button -->
+    <div class="top-right">
+        <a href="{% url 'home' %}">🔙 Back</a>
+    </div>
+
+    <div class="form-container">
+        <h1>Tell Me a Story!</h1>
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Story Type -->
+            <label for="story_type">Story Type:</label>
+            <select id="story_type" name="story_type" required onchange="toggleFields()">
+                <option value="bedtime">Bedtime Story</option>
+                <option value="educational">Educational Topic Story</option>
+                <option value="emotion">Emotion-Based Story</option>
+            </select>
+
+            <!-- Name -->
+            <label for="name">Child's Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <!-- Age -->
+            <label for="age">Child's Age:</label>
+            <input type="number" id="age" name="age" required>
+
+            <!-- Gender -->
+            <label for="gender">Child's Gender:</label>
+            <select id="gender" name="gender" required>
+                <option value="girl">Girl</option>
+                <option value="boy">Boy</option>
+            </select>
+
+            <!-- Interest -->
+            <div id="interest-group">
+                <label for="interest">Interest / Topic:</label>
+                <input type="text" id="interest" name="interest">
+            </div>
+
+            <!-- Moral -->
+            <div id="moral-group">
+                <label for="moral">Moral of the Story (e.g., Honesty, Kindness):</label>
+                <input type="text" id="moral" name="moral">
+            </div>
+
+            <!-- Emotion -->
+            <div id="emotion-group">
+                <label for="emotion">Child's Current Emotion:</label>
+                <select id="emotion" name="emotion">
+                    <option value="happy">Happy</option>
+                    <option value="sad">Sad</option>
+                    <option value="excited">Excited</option>
+                    <option value="angry">Angry</option>
+                    <option value="scared">Scared</option>
+                    <option value="bored">Bored</option>
+                </select>
+            </div>
+
+            <!-- Voice -->
+            <label for="voice">Choose Voice:</label>
+            <select id="voice" name="voice">
+                <option value="Google US English">Female</option>
+                <option value="Microsoft David - English (United States)">Male</option>
+            </select>
+
+            <!-- Language -->
+            <label for="lang">Choose Language:</label>
+            <select id="lang" name="lang" required>
+                <option value="en-US">English</option>
+                <option value="hi-IN">Hindi</option>
+                <option value="te-IN">Telugu</option>
+            </select>
+
+            <!-- Submit -->
+            <button type="submit">Generate Story</button>
+        </form>
+    </div>
+
+    <script>
+        function toggleFields() {
+            const storyType = document.getElementById("story_type").value;
+
+            const moralGroup = document.getElementById("moral-group");
+            const interestGroup = document.getElementById("interest-group");
+            const emotionGroup = document.getElementById("emotion-group");
+
+            document.getElementById("moral").required = false;
+            document.getElementById("interest").required = false;
+            document.getElementById("emotion").required = false;
+
+            moralGroup.style.display = "none";
+            interestGroup.style.display = "none";
+            emotionGroup.style.display = "none";
+
+            if (storyType === "bedtime") {
+                moralGroup.style.display = "block";
+                document.getElementById("moral").required = true;
+            } else if (storyType === "educational") {
+                interestGroup.style.display = "block";
+                document.getElementById("interest").required = true;
+            } else if (storyType === "emotion") {
+                emotionGroup.style.display = "block";
+                document.getElementById("emotion").required = true;
+            }
+        }
+
+        window.onload = toggleFields;
+    </script>
+
+</body>
+</html>
